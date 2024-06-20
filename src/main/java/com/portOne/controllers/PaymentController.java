@@ -1,9 +1,7 @@
 package com.portOne.controllers;
 
-import com.portOne.models.PaymentIntentEntity;
 import com.portOne.models.PaymentIntentResponse;
 import com.portOne.models.RefundResponse;
-import com.portOne.repositories.PaymentIntentRepository;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.PaymentIntentCollection;
@@ -12,21 +10,17 @@ import com.stripe.param.PaymentIntentCaptureParams;
 import com.stripe.param.PaymentIntentConfirmParams;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.PaymentIntentListParams;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/api/v1")
 public class PaymentController {
-
-    @Autowired
-    private PaymentIntentRepository paymentIntentRepository;
 
     @PostMapping("/create_intent")
     public ResponseEntity<PaymentIntentResponse> createIntent() {
@@ -38,19 +32,10 @@ public class PaymentController {
                     .setAutomaticPaymentMethods(
                             PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
                                     .setEnabled(true)
-                                    .build()
-                    )
+                                    .build())
                     .build();
 
             PaymentIntent paymentIntent = PaymentIntent.create(params);
-
-            PaymentIntentEntity paymentIntentEntity = new PaymentIntentEntity();
-            paymentIntentEntity.setPaymentIntentId(paymentIntent.getId());
-            paymentIntentEntity.setAmount(paymentIntent.getAmount());
-            paymentIntentEntity.setCurrency(paymentIntent.getCurrency());
-            paymentIntentEntity.setStatus(paymentIntent.getStatus());
-
-            paymentIntentRepository.save(paymentIntentEntity);
 
             PaymentIntentResponse response = new PaymentIntentResponse();
             response.setId(paymentIntent.getId());
@@ -68,7 +53,6 @@ public class PaymentController {
         }
     }
 
-    
     @PostMapping("/confirm_intent/{id}")
     public ResponseEntity<PaymentIntentResponse> confirmIntent(@PathVariable String id) {
         try {
@@ -79,13 +63,6 @@ public class PaymentController {
                     .build();
 
             PaymentIntent confirmedIntent = paymentIntent.confirm(params);
-
-            // Update the status in the database
-            PaymentIntentEntity paymentIntentEntity = paymentIntentRepository.findByPaymentIntentId(id);
-            if (paymentIntentEntity != null) {
-                paymentIntentEntity.setStatus(confirmedIntent.getStatus());
-                paymentIntentRepository.save(paymentIntentEntity);
-            }
 
             PaymentIntentResponse response = new PaymentIntentResponse();
             response.setId(confirmedIntent.getId());
@@ -103,27 +80,19 @@ public class PaymentController {
         }
     }
 
-    
-
     @PostMapping("/capture_intent/{id}")
     public ResponseEntity<String> captureIntent(@PathVariable String id) {
         try {
             PaymentIntent paymentIntent = PaymentIntent.retrieve(id);
 
-            // Check the status of the PaymentIntent
             if (!"requires_capture".equals(paymentIntent.getStatus())) {
-                return ResponseEntity.status(400).body("PaymentIntent must be in requires_capture status to be captured. Current status: " + paymentIntent.getStatus());
+                return ResponseEntity.status(400)
+                        .body("PaymentIntent must be in requires_capture status to be captured. Current status: "
+                                + paymentIntent.getStatus());
             }
 
             PaymentIntentCaptureParams params = PaymentIntentCaptureParams.builder().build();
             PaymentIntent capturedIntent = paymentIntent.capture(params);
-
-            // Update the status in the database
-            PaymentIntentEntity paymentIntentEntity = paymentIntentRepository.findByPaymentIntentId(id);
-            if (paymentIntentEntity != null) {
-                paymentIntentEntity.setStatus(capturedIntent.getStatus());
-                paymentIntentRepository.save(paymentIntentEntity);
-            }
 
             return ResponseEntity.ok("PaymentIntent captured successfully. ID: " + capturedIntent.getId());
         } catch (StripeException e) {
@@ -135,7 +104,6 @@ public class PaymentController {
         }
     }
 
-
     @PostMapping("/create_refund/{id}")
     public ResponseEntity<RefundResponse> createRefund(@PathVariable String id) {
         try {
@@ -144,17 +112,8 @@ public class PaymentController {
             params.put("payment_intent", paymentIntent.getId());
             params.put("amount", paymentIntent.getAmount());
 
-            // Create the refund
             Refund refund = Refund.create(params);
 
-            // Update the status in the database
-            PaymentIntentEntity paymentIntentEntity = paymentIntentRepository.findByPaymentIntentId(id);
-            if (paymentIntentEntity != null) {
-                paymentIntentEntity.setStatus("refunded");
-                paymentIntentRepository.save(paymentIntentEntity);
-            }
-
-            // Create a response object
             RefundResponse refundResponse = new RefundResponse();
             refundResponse.setId(refund.getId());
             refundResponse.setStatus(refund.getStatus());
@@ -175,7 +134,7 @@ public class PaymentController {
             PaymentIntentCollection paymentIntents = PaymentIntent.list(params);
 
             List<PaymentIntentResponse> intentDTOs = paymentIntents.getData().stream().map(intent -> {
-            	PaymentIntentResponse dto = new PaymentIntentResponse();
+                PaymentIntentResponse dto = new PaymentIntentResponse();
                 dto.setId(intent.getId());
                 dto.setAmount(intent.getAmount());
                 dto.setCurrency(intent.getCurrency());
