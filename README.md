@@ -71,7 +71,7 @@ The application will start on port 8080 by default.
 
   Creates a new Payment Intent with default parameters.
   
-![createIntent](https://github.com/Kapil7982/PortOne/assets/103938868/60092a04-90ba-479b-b9a6-e438c53ea8df)
+![createIntent](https://github.com/Kapil7982/StripePaymentGetway/assets/103938868/ba97a693-fb7c-448c-8ba3-bdab0f3693a0)
 -
 
 ### Confirm Payment Intent
@@ -80,21 +80,23 @@ The application will start on port 8080 by default.
 
   Confirms a Payment Intent by ID.
   
-![confirmIntent](https://github.com/Kapil7982/PortOne/assets/103938868/536ee640-43e9-4539-b825-a3266859d135)
+![confirmIntent](https://github.com/Kapil7982/StripePaymentGetway/assets/103938868/15fa347f-09d3-457c-a997-3d45dbae1cde)
 -
 ### Capture Payment Intent
 
 - **POST** `/api/v1/capture_intent/{id}`
+  
   Captures a Payment Intent that requires manual capture.
 
-![captureIntent](https://github.com/Kapil7982/PortOne/assets/103938868/dc1f045b-56e2-47f9-bf8b-0351d4586de2)
+![captureIntent](https://github.com/Kapil7982/StripePaymentGetway/assets/103938868/bc3d84d5-4a30-4967-b71d-9bd0da47a321)
 -
 ### Create Refund
 
 - **POST** `/api/v1/create_refund/{id}`
+  
   Creates a refund for a Payment Intent by ID.
 
-![createRefund](https://github.com/Kapil7982/PortOne/assets/103938868/d20c65c0-d968-434b-9507-af02aa99cd33)
+![createRefund](https://github.com/Kapil7982/StripePaymentGetway/assets/103938868/be2cb317-5d99-4200-9c69-fa3f4200fdef)
 -
  
 ### Get Payment Intents
@@ -102,7 +104,7 @@ The application will start on port 8080 by default.
 - **GET** `/api/v1/get_intents`
   Retrieves a list of Payment Intents.
 
-![getAllIntent](https://github.com/Kapil7982/PortOne/assets/103938868/99e558fc-59f4-4f12-a7e1-1427e116a567)
+![getAllIntent](https://github.com/Kapil7982/StripePaymentGetway/assets/103938868/3c457748-9f23-4bee-ab3a-82817553ae92)
 -
 
 ## Deployment Link
