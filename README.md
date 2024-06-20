@@ -14,6 +14,7 @@ This Spring Boot application demonstrates integration with the Stripe Payment Ga
 - [API Endpoints](#api-endpoints)
 - [Deployment Link](#deployment-link)
 - [Video Explanation](#video-explanation)
+- [Postman Collection}](#postman-collection)
 - [Reference](#reference)
 
 
@@ -110,6 +111,10 @@ The application will start on port 8080 by default.
 
 ## Video Explanation
   Link:- https://drive.google.com/file/d/1jpPQDqVKZGXjd3MrfZ6v8rnmG44sUKdy/view?usp=sharing
+  -
+
+## Postman Collection
+  Link:- https://martian-water-219147.postman.co/workspace/PortOne-Workspace~bf4682ea-d2d9-4615-bbf0-e24f618e3e4d/collection/24278763-f3398bc4-a631-434b-94d8-4935c5366011?action=share&creator=24278763
   -
 ## Reference
 
